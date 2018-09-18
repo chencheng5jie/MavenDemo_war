@@ -1,6 +1,5 @@
 node {
    def mvnHome
-   notifyStarted()  
    stage('Checkout SCM') {
       //git 'https://github.com/MahadevDevops/MavenDemo_war.git'
       checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MahadevDevops/MavenDemo_war.git']]])
@@ -16,18 +15,40 @@ node {
       //junit '**/target/surefire-reports/TEST-*.xml'
       archiveArtifacts 'target/*.war'
    }
-   stage('Publish') {
+   
+   
+   stage('SonarQube Analysis') {
+       // def mvnHome =  tool name: 'M3', type: 'maven'
+        withSonarQubeEnv('mySonar') { 
+          sh "${mvnHome}/bin/mvn sonar:sonar"
+        }
+    
+    }
+   
+  /*
+   stage("Quality Gate"){
+          timeout(time: 1, unit: 'MINUTES') {
+              def qg = waitForQualityGate()
+              if (qg.status != 'OK') {
+                  error "Pipeline aborted due to quality gate failure: ${qg.status}"
+              }
+          }
+      }
+ 
+	 */ 
+   
+   stage('Publish to Sonar') {
         echo "Publishing"
         nexusPublisher nexusInstanceId: 'MyNexus', nexusRepositoryId: 'maven-releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: '/var/lib/jenkins/workspace/FinalPipeline/target/my-app.war']], mavenCoordinate: [artifactId: 'my-app', groupId: 'com.mycompany.app', packaging: 'war', version: '10']]]
         
         
     } 
-}
-
- def notifyStarted() {
-  
-  mail to: 'mahadeva.garad1@gmail.com',
-                            subject: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                            body: """<p>STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
-                                      <p>Check console output at "<a href="${env.BUILD_URL}">${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>"</p>"""
-}
+    
+    
+    stage('Deploy to Tomcat'){
+    
+        sh 'scp target/*.war root@10.142.0.11:/var/lib/tomcat8/webapps/'
+        //sh 'sudo service tomcat8 restart'
+        
+    }
+} 
