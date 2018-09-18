@@ -1,6 +1,9 @@
 node {
    def mvnHome
-   notifyStarted()
+   
+   emailext body: '''"""<p>STARTED: Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\':</p>
+    <p>Check console output at "<a href="${env.BUILD_URL}">${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>"</p>""",''', subject: '"STARTED: Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\'"', to: 'ajitgarad333@gmail.com'
+   
    stage('Checkout SCM') {
       //git 'https://github.com/MahadevDevops/MavenDemo_war.git'
       checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/MahadevDevops/MavenDemo_war.git']]])
@@ -23,11 +26,5 @@ node {
         
     } 
 }
-def notifyStarted() {
-  // send to Slack
-   
-  // send to email
 
-emailext body: '''"""<p>STARTED: Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\':</p>
-    <p>Check console output at "<a href="${env.BUILD_URL}">${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>"</p>""",''', subject: '"STARTED: Job \'${env.JOB_NAME} [${env.BUILD_NUMBER}]\'"', to: 'ajitgarad333@gmail.com'
-} 
+ 
