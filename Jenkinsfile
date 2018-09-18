@@ -1,5 +1,4 @@
-
-de {
+node {
    def mvnHome
    notifyStarted()  
    stage('Checkout SCM') {
