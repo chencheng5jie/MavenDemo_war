@@ -4,7 +4,7 @@
   <groupId>com.mycompany.app</groupId>
   <artifactId>my-app</artifactId>
   <packaging>war</packaging>
-  <version>4.0</version>
+  <version>8.1</version>
   <name>my-app Maven Webapp</name>
   <url>http://maven.apache.org</url>
   <dependencies>
