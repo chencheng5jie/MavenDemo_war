@@ -1,3 +1,3 @@
 FROM busybox
-ADD app.war /app.war
+ADD target/my-app.war /my-app.war
 ADD root.sh /root.sh
