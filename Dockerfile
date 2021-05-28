@@ -1,3 +1,3 @@
-FROM  test.hub/pub/busybox:v1
+FROM busybox
 ADD app.war /app.war
 ADD root.sh /root.sh
